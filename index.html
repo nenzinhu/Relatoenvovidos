@@ -6,62 +6,70 @@
     <title>Relatório Sinistro PRO</title>
     <style>
         :root { --primary: #25d366; --secondary: #3498db; --dark: #2c3e50; --bg: #f0f2f5; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--bg); padding: 20px; color: #333; }
+        
         .container { background: white; max-width: 600px; margin: auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h2 { text-align: center; color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
+        h2 { text-align: center; color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 10px; margin-bottom: 25px; }
         
         .envolvido-card { 
-            background: #fff; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            border-left: 6px solid var(--secondary); 
-            border: 1px solid #ddd;
-            border-left-width: 6px;
+            background: #fff; padding: 20px; border-radius: 12px; margin-bottom: 25px; 
+            border: 1px solid #ddd; border-left: 8px solid var(--secondary);
+            position: relative;
         }
 
+        h3 { margin-top: 0; color: var(--secondary); font-size: 1.2em; }
+
         label { display: block; margin-top: 15px; font-size: 0.75em; font-weight: bold; color: #7f8c8d; }
-        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
-        input:not(.contato):not([type="file"]) { text-transform: uppercase; }
+        input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        input:not(.contato) { text-transform: uppercase; }
         
-        /* Galeria de Fotos */
-        .foto-preview { 
+        /* Área de Miniaturas */
+        .foto-preview-container { 
             display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); 
-            gap: 8px; 
-            margin-top: 12px; 
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); 
+            gap: 10px; 
+            margin-top: 15px; 
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            min-height: 50px;
         }
-        .img-container { width: 100%; aspect-ratio: 1/1; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; background: #eee; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        
+
+        .img-miniatura { 
+            width: 100%; 
+            aspect-ratio: 1/1; 
+            border-radius: 6px; 
+            object-fit: cover; 
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
         .btn-foto { 
-            background: #e67e22; 
-            color: white; 
-            padding: 12px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            display: block; 
-            text-align: center;
-            margin-top: 10px; 
-            font-size: 0.85em; 
-            font-weight: bold; 
+            background: #e67e22; color: white; padding: 14px; border-radius: 8px; 
+            cursor: pointer; display: block; text-align: center; margin-top: 10px; 
+            font-size: 0.9em; font-weight: bold; transition: 0.3s;
         }
+        .btn-foto:hover { background: #d35400; }
 
         .menu-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
         button { border: none; padding: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 14px; }
+        
         .btn-add { background: var(--dark); grid-column: span 2; margin-bottom: 10px; }
         .btn-copy { background: #7f8c8d; }
         .btn-whats { background: var(--primary); }
         button:active { transform: scale(0.98); }
+
+        @media (max-width: 480px) { .menu-botoes { grid-template-columns: 1fr; } .btn-add { grid-column: span 1; } }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>📋 Registro de Sinistro</h2>
+    
     <div id="lista-envolvidos">
         <div class="envolvido-card">
-            <h3 style="margin-top:0">Envolvido 1</h3>
+            <h3>Envolvido 1</h3>
             
             <label>NOME COMPLETO:</label>
             <input type="text" class="nome" placeholder="NOME DO MOTORISTA" spellcheck="true">
@@ -69,20 +77,22 @@
             <label>VEÍCULO:</label>
             <input type="text" class="marca" placeholder="MARCA / MODELO / PLACA">
             
-            <label>CONTATO (TELEFONE):</label>
+            <label>CONTATO:</label>
             <input type="tel" class="contato" oninput="mascara(this)" placeholder="(00) 00000-0000" maxlength="15">
             
-            <label>LOCAL DO OCORRIDO:</label>
+            <label>LOCAL:</label>
             <input type="text" class="endereco" placeholder="RUA, NÚMERO, BAIRRO">
             
             <label>RELATO / DINÂMICA:</label>
             <textarea class="relato" rows="3" placeholder="Descreva os fatos..." spellcheck="true"></textarea>
             
             <label class="btn-foto">
-                📸 TIRAR OU ANEXAR FOTOS (SEM LIMITE)
-                <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)">
+                📸 TIRAR OU ANEXAR FOTOS
+                <input type="file" accept="image/*" multiple style="display: none;" onchange="gerarMiniatura(this)">
             </label>
-            <div class="foto-preview"></div>
+            
+            <div class="foto-preview-container">
+                </div>
         </div>
     </div>
 
@@ -95,7 +105,7 @@
 </div>
 
 <script>
-    // Máscara para celular (Brasil)
+    // Máscara de telefone
     function mascara(i) {
         let v = i.value.replace(/\D/g, "");
         if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
@@ -103,25 +113,26 @@
         i.value = v;
     }
 
-    // Preview de múltiplas fotos
-    function preview(input) {
-        const p = input.parentElement.nextElementSibling;
-        p.innerHTML = ""; // Limpa para atualizar
+    // Função para mostrar miniaturas das fotos
+    function gerarMiniatura(input) {
+        const container = input.parentElement.nextElementSibling;
+        container.innerHTML = ""; // Limpa visualização anterior
+        
         if (input.files) {
-            Array.from(input.files).forEach(f => {
-                const r = new FileReader();
-                r.onload = e => { 
-                    const div = document.createElement('div');
-                    div.className = 'img-container';
-                    div.innerHTML = `<img src="${e.target.result}">`;
-                    p.appendChild(div);
-                };
-                r.readAsDataURL(f);
+            Array.from(input.files).forEach(arquivo => {
+                const leitor = new FileReader();
+                leitor.onload = function(e) {
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-miniatura';
+                    container.appendChild(img);
+                }
+                leitor.readAsDataURL(arquivo);
             });
         }
     }
 
-    // Adiciona novo card de envolvido
+    // Adiciona novo envolvido
     function adicionar() {
         const lista = document.getElementById('lista-envolvidos');
         const n = lista.children.length + 1;
@@ -139,13 +150,14 @@
             <input type="text" class="endereco">
             <label>RELATO:</label>
             <textarea class="relato" rows="3" spellcheck="true"></textarea>
-            <label class="btn-foto">📸 TIRAR OU ANEXAR FOTOS <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)"></label>
-            <div class="foto-preview"></div>
+            <label class="btn-foto">📸 TIRAR OU ANEXAR FOTOS <input type="file" accept="image/*" multiple style="display: none;" onchange="gerarMiniatura(this)"></label>
+            <div class="foto-preview-container"></div>
         `;
         lista.appendChild(div);
+        div.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Gera o texto com espaçamento maior (\n\n) e formatação clicável para Telegram
+    // Monta o texto com espaçamento extra e formato para Telegram
     function montarTexto() {
         const cards = document.querySelectorAll('.envolvido-card');
         let txt = "*📋 RELATÓRIO DE SINISTRO*\n";
@@ -153,7 +165,4 @@
         txt += "--------------------------\n\n";
 
         cards.forEach((c, i) => {
-            const n = c.querySelector('.nome').value.toUpperCase().trim() || "NÃO INFORMADO";
-            const v = c.querySelector('.marca').value.toUpperCase().trim() || "NÃO INFORMADO";
-            const t = c.querySelector('.contato').value.trim() || "NÃO INFORMADO";
-            const l = c.querySelector
+            const n = c.querySelector('.nome
