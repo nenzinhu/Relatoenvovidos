@@ -9,19 +9,50 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
         .container { background: white; max-width: 600px; margin: auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 10px; }
-        .envolvido-card { background: #fff; padding: 15px; border-radius: 10px; margin-bottom: 20px; border-left: 6px solid var(--secondary); border-top: 1px solid #eee; border-right: 1px solid #eee; border-bottom: 1px solid #eee; }
-        label { display: block; margin-top: 12px; font-size: 0.75em; font-weight: bold; color: #7f8c8d; }
+        
+        .envolvido-card { 
+            background: #fff; 
+            padding: 15px; 
+            border-radius: 10px; 
+            margin-bottom: 20px; 
+            border-left: 6px solid var(--secondary); 
+            border: 1px solid #ddd;
+            border-left-width: 6px;
+        }
+
+        label { display: block; margin-top: 15px; font-size: 0.75em; font-weight: bold; color: #7f8c8d; }
         input, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 15px; }
         input:not(.contato):not([type="file"]) { text-transform: uppercase; }
-        .foto-preview { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
-        .img-container { width: 60px; height: 60px; border-radius: 5px; overflow: hidden; border: 1px solid #ddd; }
+        
+        /* Galeria de Fotos */
+        .foto-preview { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); 
+            gap: 8px; 
+            margin-top: 12px; 
+        }
+        .img-container { width: 100%; aspect-ratio: 1/1; border-radius: 6px; overflow: hidden; border: 1px solid #ccc; background: #eee; }
         .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .btn-foto { background: #e67e22; color: white; padding: 10px; border-radius: 8px; cursor: pointer; display: inline-block; margin-top: 5px; font-size: 0.8em; font-weight: bold; }
-        .menu-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        button { border: none; padding: 16px; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; }
-        .btn-add { background: var(--dark); grid-column: span 2; margin-bottom: 5px; }
+        
+        .btn-foto { 
+            background: #e67e22; 
+            color: white; 
+            padding: 12px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            display: block; 
+            text-align: center;
+            margin-top: 10px; 
+            font-size: 0.85em; 
+            font-weight: bold; 
+        }
+
+        .menu-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 25px; }
+        button { border: none; padding: 18px; border-radius: 10px; cursor: pointer; font-weight: bold; color: white; transition: 0.3s; font-size: 14px; }
+        .btn-add { background: var(--dark); grid-column: span 2; margin-bottom: 10px; }
         .btn-copy { background: #7f8c8d; }
         .btn-whats { background: var(--primary); }
+        button:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -30,22 +61,33 @@
     <h2>📋 Registro de Sinistro</h2>
     <div id="lista-envolvidos">
         <div class="envolvido-card">
-            <h3>Envolvido 1</h3>
+            <h3 style="margin-top:0">Envolvido 1</h3>
+            
             <label>NOME COMPLETO:</label>
             <input type="text" class="nome" placeholder="NOME DO MOTORISTA" spellcheck="true">
+            
             <label>VEÍCULO:</label>
             <input type="text" class="marca" placeholder="MARCA / MODELO / PLACA">
-            <label>CONTATO:</label>
+            
+            <label>CONTATO (TELEFONE):</label>
             <input type="tel" class="contato" oninput="mascara(this)" placeholder="(00) 00000-0000" maxlength="15">
-            <label>LOCAL:</label>
+            
+            <label>LOCAL DO OCORRIDO:</label>
             <input type="text" class="endereco" placeholder="RUA, NÚMERO, BAIRRO">
-            <label>RELATO:</label>
-            <textarea class="relato" placeholder="O que aconteceu?" spellcheck="true"></textarea>
-            <label class="btn-foto">📸 ADICIONAR FOTOS <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)"></label>
+            
+            <label>RELATO / DINÂMICA:</label>
+            <textarea class="relato" rows="3" placeholder="Descreva os fatos..." spellcheck="true"></textarea>
+            
+            <label class="btn-foto">
+                📸 TIRAR OU ANEXAR FOTOS (SEM LIMITE)
+                <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)">
+            </label>
             <div class="foto-preview"></div>
         </div>
     </div>
-    <button class="btn-add" onclick="adicionar()">+ ADICIONAR ENVOLVIDO</button>
+
+    <button class="btn-add" onclick="adicionar()">+ ADICIONAR NOVO ENVOLVIDO</button>
+
     <div class="menu-botoes">
         <button class="btn-copy" onclick="copiar()">📄 COPIAR PARA TELEGRAM/ZAP</button>
         <button class="btn-whats" onclick="enviarWhats()">🟢 ENVIAR WHATSAPP</button>
@@ -53,6 +95,7 @@
 </div>
 
 <script>
+    // Máscara para celular (Brasil)
     function mascara(i) {
         let v = i.value.replace(/\D/g, "");
         if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
@@ -60,54 +103,57 @@
         i.value = v;
     }
 
+    // Preview de múltiplas fotos
     function preview(input) {
         const p = input.parentElement.nextElementSibling;
-        p.innerHTML = "";
-        Array.from(input.files).forEach(f => {
-            const r = new FileReader();
-            r.onload = e => { p.innerHTML += `<div class="img-container"><img src="${e.target.result}"></div>`; };
-            r.readAsDataURL(f);
-        });
+        p.innerHTML = ""; // Limpa para atualizar
+        if (input.files) {
+            Array.from(input.files).forEach(f => {
+                const r = new FileReader();
+                r.onload = e => { 
+                    const div = document.createElement('div');
+                    div.className = 'img-container';
+                    div.innerHTML = `<img src="${e.target.result}">`;
+                    p.appendChild(div);
+                };
+                r.readAsDataURL(f);
+            });
+        }
     }
 
+    // Adiciona novo card de envolvido
     function adicionar() {
         const lista = document.getElementById('lista-envolvidos');
         const n = lista.children.length + 1;
         const div = document.createElement('div');
         div.className = 'envolvido-card';
-        div.innerHTML = `<h3>Envolvido ${n}</h3><label>NOME:</label><input type="text" class="nome" spellcheck="true"><label>VEÍCULO:</label><input type="text" class="marca"><label>CONTATO:</label><input type="tel" class="contato" oninput="mascara(this)" maxlength="15"><label>LOCAL:</label><input type="text" class="endereco"><label>RELATO:</label><textarea class="relato" spellcheck="true"></textarea><label class="btn-foto">📸 ADICIONAR FOTOS <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)"></label><div class="foto-preview"></div>`;
+        div.innerHTML = `
+            <h3>Envolvido ${n}</h3>
+            <label>NOME COMPLETO:</label>
+            <input type="text" class="nome" spellcheck="true">
+            <label>VEÍCULO:</label>
+            <input type="text" class="marca">
+            <label>CONTATO:</label>
+            <input type="tel" class="contato" oninput="mascara(this)" maxlength="15">
+            <label>LOCAL:</label>
+            <input type="text" class="endereco">
+            <label>RELATO:</label>
+            <textarea class="relato" rows="3" spellcheck="true"></textarea>
+            <label class="btn-foto">📸 TIRAR OU ANEXAR FOTOS <input type="file" accept="image/*" multiple style="display: none;" onchange="preview(this)"></label>
+            <div class="foto-preview"></div>
+        `;
         lista.appendChild(div);
     }
 
-    function montarTexto(isTelegram = true) {
+    // Gera o texto com espaçamento maior (\n\n) e formatação clicável para Telegram
+    function montarTexto() {
         const cards = document.querySelectorAll('.envolvido-card');
-        let txt = "*📋 RELATÓRIO DE SINISTRO*\n\n";
+        let txt = "*📋 RELATÓRIO DE SINISTRO*\n";
+        txt += "🗓️ Data: " + new Date().toLocaleDateString('pt-BR') + "\n";
+        txt += "--------------------------\n\n";
+
         cards.forEach((c, i) => {
-            const n = c.querySelector('.nome').value.toUpperCase() || "N/I";
-            const v = c.querySelector('.marca').value.toUpperCase() || "N/I";
-            const t = c.querySelector('.contato').value || "N/I";
-            const l = c.querySelector('.endereco').value.toUpperCase() || "N/I";
-            const r = c.querySelector('.relato').value.toUpperCase() || "N/I";
-            
-            // O segredo está nas crases ` ` abaixo:
-            txt += `*ENVOLVIDO ${i+1}*\n`;
-            txt += `👤 Nome: \`${n}\` \n`;
-            txt += `🚗 Veículo: \`${v}\` \n`;
-            txt += `📞 Tel: \`${t}\` \n`;
-            txt += `📍 Local: \`${l}\` \n`;
-            txt += `📝 Relato: \`${r}\` \n`;
-            txt += `--------------------------\n\n`;
-        });
-        return txt;
-    }
-
-    function copiar() {
-        navigator.clipboard.writeText(montarTexto()).then(() => alert("Copiado! No Telegram, cada linha será clicável."));
-    }
-
-    function enviarWhats() {
-        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(montarTexto())}`, '_blank');
-    }
-</script>
-</body>
-</html>
+            const n = c.querySelector('.nome').value.toUpperCase().trim() || "NÃO INFORMADO";
+            const v = c.querySelector('.marca').value.toUpperCase().trim() || "NÃO INFORMADO";
+            const t = c.querySelector('.contato').value.trim() || "NÃO INFORMADO";
+            const l = c.querySelector
